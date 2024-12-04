@@ -62,7 +62,7 @@ public:
                     else index++;
                 }
             }
-            if (line[index] == 'm' && line[index + 1] == 'u' && line[index + 2] == 'l' && line[index + 3] == '(') {
+            else if(line[index] == 'm' && line[index + 1] == 'u' && line[index + 2] == 'l' && line[index + 3] == '(') {
                 index+=3;
                 std::string xNum = "";
                 std::string rNum = "";
@@ -89,6 +89,7 @@ public:
                     
                 }
                 if(pointIndex && pointIndex<rightIndex && pass){
+                    cout<<xNum<<','<<rNum<<endl;
                     this->answer+=(std::stoi(xNum)*std::stoi(rNum));
                 }   
             }
@@ -125,10 +126,12 @@ int main(){
     std::string line ;
     auto solution  = Solution();
     int answer = 0;
+    std::string data = "";
     while (std::getline(inputFile, line)) { 
         // answer+=solution.findMulti(line);
-        solution.findMultiP2(line);
+        data+=line;
     }  
+    solution.findMultiP2(data);
     cout<<solution.answer<<endl;
     // cout<<answer<<endl;
     inputFile.close();   
