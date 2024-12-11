@@ -43,33 +43,24 @@ public:
         answer+=line[middleIndex];
         return line[middleIndex];
     }
-    int sumMiddleNumberP2(std::vector<int> line,std::unordered_map<int,std::unordered_set<int>> after,std::unordered_map<int,std::unordered_set<int>> before){
-        int middleIndex = (line.size()-1)/2;
-        int left = 0;
-        int right = line.size()-1;
-        int prevNum = 0;
-        int nextNum = 0;
-        int pass = false; 
-        while(left<=right){
-            int nowNum = line[left];
-            if(left&&after.contains(line[left])&&after[line[left]].contains(prevNum)){
-                pass = true;
-                line[left] = prevNum;
-                line[left-1] = nowNum;
+    int sumMiddleNumberP2(std::vector<int> line , std::unordered_map<int,std::vector<int>> graph){
+        std::unordered_set<int> nowNums = std::unordered_set(line.begin(),line.end());
+        std::unordered_map<int,int> inDegrees;
+        std::vector<int> sortedVec; 
+        std::unordered_set<int> processNum;
+        bool pass = true;
+        for(auto num : line){
+            for(auto number : graph[num]){
+                if(nowNums.count(number)) inDegrees[number]++;
+                if(processNum.count(num)) pass = false;
             }
-            prevNum =  line[left++];
+            processNum.emplace(num);
         }
-        while(right>=0){
-            int nowNum = line[right];
-            if(right!=line.size()-1&&before.contains(line[right])&&before[line[right]].contains(nextNum)){
-                pass = true;
-                line[right] = nextNum;
-                line[right+1] = nowNum;
-            }
-            nextNum =  line[right--];
-        } 
-        if(pass) answer+=line[middleIndex];
-        return 0;
+        if(pass) return 0;
+        
+        for(auto num:line){
+            
+        }
     }
 };
 
@@ -93,10 +84,17 @@ int main(){
         before[afterNumber].emplace(beforeNumber);
     }
     
+    std::unordered_map<int,std::vector<int>> graph;
+    for(auto intLine : allIntLine){
+        int beforeNumber = intLine[0];
+        int afterNumber = intLine[1];
+        if(!graph.contains(beforeNumber)) graph[beforeNumber] =  std::vector<int>();
+        graph[beforeNumber].emplace_back(afterNumber);
+    }
 
     std::ifstream inputFile2("input.txt");
     while (std::getline(inputFile2, line)) { 
-       solution.sumMiddleNumberP2(solution.split(line,','),after,before);
+       solution.sumMiddleNumberP2(solution.split(line,','),graph);
     }   
     inputFile.close();   
     cout<<solution.answer<<endl; 
