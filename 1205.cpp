@@ -3,6 +3,8 @@
 #include <map>
 using namespace std;
 
+
+//這題的核心，別想太多，這題要用到有向圖跟拓撲排序法，基本上我卡在．如果同時多個indegree為0
 class Solution {
 public:
     int answer = 0; 
@@ -48,19 +50,82 @@ public:
         std::unordered_map<int,int> inDegrees;
         std::vector<int> sortedVec; 
         std::unordered_set<int> processNum;
+        std::vector<int> zeroIndNums;
         bool pass = true;
         for(auto num : line){
             for(auto number : graph[num]){
                 if(nowNums.count(number)) inDegrees[number]++;
-                if(processNum.count(num)) pass = false;
+                if(processNum.count(number)) pass = false;
             }
             processNum.emplace(num);
         }
         if(pass) return 0;
-        
-        for(auto num:line){
-            
+        else{
+            for (int num : line) {
+                if (inDegrees[num] == 0) {
+                    zeroIndNums.push_back(num);
+                }
+            }
+
+            for (int zeroIndNum : zeroIndNums) {
+                topoSort(zeroIndNum,graph, sortedVec, inDegrees, nowNums);
+            }
+
+            // 累加排序後的中間頁面值
+            answer += sortedVec[sortedVec.size() / 2];
         }
+        return answer; 
+    }
+
+    void topoSort(int nowNum,std::unordered_map<int,std::vector<int>> graph,std::vector<int>& sortedVec,std::unordered_map<int,int>& inDegrees,std::unordered_set<int> nowNums){
+        sortedVec.emplace_back(nowNum);
+        for(auto node:graph[nowNum]){
+            if(nowNums.contains(node)){
+                if(--inDegrees[node] == 0) this->topoSort(node,graph,sortedVec,inDegrees,nowNums);
+            }
+        }
+        return ;
+    }
+    int sumMiddleNumberP3(std::vector<int> line , std::unordered_map<int,std::vector<int>> graph){
+        std::unordered_set<int> nowNums = std::unordered_set(line.begin(),line.end());
+        std::unordered_map<int,int> inDegrees;
+        std::vector<int> sortedVec; 
+        std::unordered_set<int> processNum;
+        std::vector<int> zeroIndNums;
+        bool pass = true;
+        for(auto num : line){
+            for(auto number : graph[num]){
+                if(nowNums.count(number)) inDegrees[number]++;
+                if(processNum.count(number)) pass = false;
+            }
+            processNum.emplace(num);
+        }
+        if(pass) return 0;
+        else{
+            for (int num : line) {
+                if (inDegrees[num] == 0) {
+                    zeroIndNums.push_back(num);
+                }
+            }
+
+            for (int zeroIndNum : zeroIndNums) {
+                topoSort(zeroIndNum,graph, sortedVec, inDegrees, nowNums);
+            }
+
+            // 累加排序後的中間頁面值
+            answer += sortedVec[sortedVec.size() / 2];
+        }
+        return answer; 
+    }
+
+    void topoSort(int nowNum,std::unordered_map<int,std::vector<int>> graph,std::vector<int>& sortedVec,std::unordered_map<int,int>& inDegrees,std::unordered_set<int> nowNums){
+        sortedVec.emplace_back(nowNum);
+        for(auto node:graph[nowNum]){
+            if(nowNums.contains(node)){
+                if(--inDegrees[node] == 0) this->topoSort(node,graph,sortedVec,inDegrees,nowNums);
+            }
+        }
+        return ;
     }
 };
 
